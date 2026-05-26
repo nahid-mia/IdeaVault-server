@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = process.env.MONGODB_URI;
 
@@ -56,6 +56,13 @@ async function run() {
                 res.status(500).send('Error fetching ideas');
             }
         });
+
+
+        app.get(`/ideas/:id`, async (req, res) => {
+            const { id } = req.params;
+            const result = await ideaCollection.find({ _id: new ObjectId(id) }).toArray();
+            res.json(result);
+        })
 
 
         await client.db("admin").command({ ping: 1 });

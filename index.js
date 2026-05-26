@@ -24,22 +24,47 @@ const PORT = process.env.PORT;
 
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
+
+        const db = client.db('ideaVault');
+        const ideaCollection = db.collection('ideas');
+
+        app.get('/ideas', async (req, res) => {
+            try {
+                const { search, category, dateFrom, dateTo } = req.query;
+
+                const query = {};
+
+                if (search) {
+                    query.ideaTitle = { $regex: search, $options: 'i' };
+                }
+
+                if (category) {
+                    query.category = category;
+                }
+
+                if (dateFrom || dateTo) {
+                    query.createdAt = {};
+                    if (dateFrom) query.createdAt.$gte = new Date(dateFrom);
+                    if (dateTo) query.createdAt.$lte = new Date(dateTo);
+                }
+
+                const result = await ideaCollection.find(query).toArray();
+                res.json(result);
+            } catch (error) {
+                console.error('Error fetching ideas', error);
+                res.status(500).send('Error fetching ideas');
+            }
+        });
+
+
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
-        await client.close();
+        // await client.close();
     }
 }
 run().catch(console.dir);
-
-
-
-
-
-
-
-
 
 
 

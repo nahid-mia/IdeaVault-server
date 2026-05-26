@@ -57,12 +57,18 @@ async function run() {
             }
         });
 
+        app.get('/ideas/featured', async (req, res) => {
+            const result = await ideaCollection.find().limit(4).toArray();
+            res.json(result);
+        })
 
         app.get(`/ideas/:id`, async (req, res) => {
             const { id } = req.params;
             const result = await ideaCollection.find({ _id: new ObjectId(id) }).toArray();
             res.json(result);
         })
+
+
 
 
         await client.db("admin").command({ ping: 1 });

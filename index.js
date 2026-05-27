@@ -30,6 +30,7 @@ async function run() {
         const ideaCollection = db.collection('ideas');
         const myIdeaCollection = db.collection('myIdeas');
         const userCollection = db.collection('user');
+        const commentCollection = db.collection('comments');
 
         app.get('/ideas', async (req, res) => {
             try {
@@ -117,6 +118,21 @@ async function run() {
                 res.status(500).json({ error: error.message });
             }
         });
+
+        app.post('/comments', async (req, res) => {
+            try {
+                const result = await commentCollection.insertOne(req.body);
+                res.json(result)
+            } catch (error) {
+                res.status(500).json({ error: 'Something went wrong' })
+            }
+        })
+
+        app.get('/comments/:id', async (req, res) => {
+            const { id } = req.params;
+            const result = await commentCollection.find({ ideaId: id }).toArray();
+            res.json(result);
+        })
 
 
 

@@ -28,6 +28,7 @@ async function run() {
 
         const db = client.db('ideaVault');
         const ideaCollection = db.collection('ideas');
+        const myIdeaCollection = db.collection('myIdeas');
 
         app.get('/ideas', async (req, res) => {
             try {
@@ -58,7 +59,7 @@ async function run() {
         });
 
         app.get('/ideas/featured', async (req, res) => {
-            const result = await ideaCollection.find().limit(4).toArray();
+            const result = await ideaCollection.find().limit(6).toArray();
             res.json(result);
         })
 
@@ -68,6 +69,31 @@ async function run() {
             res.json(result);
         })
 
+
+        app.post('/ideas', async (req, res) => {
+            try {
+                const result = await ideaCollection.insertOne(req.body);
+                res.json(result)
+            } catch (error) {
+                res.status(500).json({ error: 'Something went wrong' })
+            }
+        })
+
+        app.post(`/myIdeas`, async (req, res) => {
+            try {
+                const result = await myIdeaCollection.insertOne(req.body);
+                res.json(result)
+            } catch (error) {
+                res.status(500).json({ error: 'Something went wrong' })
+            }
+        })
+
+
+        app.get('/myIdeas/:id', async (req, res) => {
+            const { id } = req.params;
+            const result = await myIdeaCollection.find({ authorId: id }).toArray();
+            res.json([...result]);
+        })
 
 
 

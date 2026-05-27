@@ -92,9 +92,15 @@ async function run() {
 
         app.get('/myIdeas/:id', async (req, res) => {
             const { id } = req.params;
+            const result = await myIdeaCollection.find({ _id: new ObjectId(id) }).toArray();
+            res.json(result);
+        })
+
+        app.get('/myIdeas/author/:id', async (req, res) => {
+            const { id } = req.params;
             const result = await myIdeaCollection.find({ authorId: id }).toArray();
             res.json([...result]);
-        })
+        });
 
         app.patch('/user/:id', async (req, res) => {
             const { id } = req.params;

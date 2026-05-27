@@ -29,6 +29,7 @@ async function run() {
         const db = client.db('ideaVault');
         const ideaCollection = db.collection('ideas');
         const myIdeaCollection = db.collection('myIdeas');
+        const userCollection = db.collection('user');
 
         app.get('/ideas', async (req, res) => {
             try {
@@ -94,6 +95,22 @@ async function run() {
             const result = await myIdeaCollection.find({ authorId: id }).toArray();
             res.json([...result]);
         })
+
+        app.patch('/user/:id', async (req, res) => {
+            const { id } = req.params;
+            const updatedData = req.body;
+
+            try {
+                const result = await userCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updatedData }
+                );
+                res.json(result);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: error.message });
+            }
+        });
 
 
 

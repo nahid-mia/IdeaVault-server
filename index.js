@@ -134,6 +134,31 @@ async function run() {
             res.json(result);
         })
 
+        app.patch('/comments/:id', async (req, res) => {
+            const { id } = req.params;
+            const updatedData = req.body;
+            try {
+                const result = await commentCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updatedData }
+                );
+                res.json(result);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: error.message });
+            }
+        })
+
+        app.delete('/comments/:id', async (req, res) => {
+            const { id } = req.params;
+            const result = await commentCollection.deleteOne(
+                {
+                    _id: new ObjectId(id)
+                }
+            )
+            res.json(result);
+        })
+
 
 
         await client.db("admin").command({ ping: 1 });

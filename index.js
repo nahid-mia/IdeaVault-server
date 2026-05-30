@@ -159,6 +159,12 @@ async function run() {
             res.json(result);
         })
 
+        app.get('/comments/author/:id', async (req, res) => {
+            const { id } = req.params;
+            const result = await commentCollection.find({ authorId: id }).toArray();
+            res.json(result);
+        })
+
 
 
         await client.db("admin").command({ ping: 1 });
